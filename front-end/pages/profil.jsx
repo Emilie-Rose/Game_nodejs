@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import data from '../src/service/demo_data.json';
+import demoData from '../src/service/demo_data.json';
 // Configurer Axios pour envoyer les cookies
 axios.defaults.withCredentials = true;
-console.log(data);
+console.log(demoData);
 function ProfilComponent() {
   const [user, setUser] = useState({});
   const [character, setCharacter] = useState(null);
@@ -28,7 +28,7 @@ function ProfilComponent() {
         console.error(error);
       }
     }
-     const fetchCharacter = async () => {
+    const fetchCharacter = async () => {
       // Envoyer la requête GET pour récupérer la liste des personnages
       try {
         const characterResponse = await axios.get("http://localhost:3005/api/profil/");
@@ -69,7 +69,7 @@ function ProfilComponent() {
 
   const handleCreateCharacter = async () => {
     try {
-      
+
       // Envoyer la requête POST pour créer un nouveau personnage
       await axios.post("http://localhost:3005/api/profil/", newCharacter);
       // Réinitialiser le formulaire après la création réussie
@@ -82,7 +82,7 @@ function ProfilComponent() {
         speed: '',
         techniques: [],
       });
-      
+
       // Rafraîchir la liste des personnages si il y a des personnage 
       if (character) {
         const characterResponse = await axios.get("http://localhost:3005/api/profil/");
@@ -93,20 +93,53 @@ function ProfilComponent() {
       console.error(error);
     }
   };
-  
+  // Affichage des cartes des personnages à partir du fichier demo_data.json
+  const characterCards = demoData.map((character, index) => (
+    <div key={index} className="col-md-4 mb-4">
+      <div className="character-card">
+        <img
+          src={character.picture}
+          alt={character.name}
+          className="character-image"
+          width="200"
+        />
+        <h2>{character.name}</h2>
+        <p>Force: {character.strength}</p>
+        <p>Endurance: {character.stamina}</p>
+        <p>Défense: {character.defense}</p>
+        <p>Vitesse: {character.speed}</p>
+        <h4>Techniques:</h4>
+        <ul>
+          {character.techniques.map((technique, techIndex) => (
+            <li key={techIndex}>{technique}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  ));
 
   return (
     <div className="container">
       {
         <div className="profil-container">
 
-          <h2>Bonjour, {user.data && user.data.email} !</h2>
+          {/*           <h2>Bonjour, {user.data && user.data.email} !</h2>
+ */}          {user.data && (
+            <div className="profil-container2">
+              <h2>Bonjour, {user.data.email} !</h2>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             <div className="character-list">
-            <h3>Mes personnages</h3>
+              <div className="character-list">
+                <h3>Mes personnages</h3>
+                <div className="row">
+                  {characterCards}
+                </div>
+              </div>
+            </div>
+          )}
+          <div className="character-list">
             <div className="character-list-content">
-          </div> </div>
-          
+            </div> </div>
+
           <div className="perso-content">
             <h3>Créer un personnage</h3>
             <form className="perso-form">
@@ -116,7 +149,7 @@ function ProfilComponent() {
                 value={newCharacter.name}
                 onChange={handleCharacterInputChange}
                 placeholder="Nom du personnage"
-                className="input"></input> 
+                className="input"></input>
               <input
                 type="text"
                 name="picture"
@@ -167,12 +200,12 @@ function ProfilComponent() {
               </div>
               <button type="button" onClick={handleAddTechnique} className="button">Ajouter une technique</button>
               <button type="button" onClick={handleCreateCharacter} className="button">Créer le personnage</button>
-              </form>
-            </div>
+            </form>
+          </div>
         </div>
 
-        
-       }
+
+      }
     </div>
   );
 }
